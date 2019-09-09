@@ -19,8 +19,7 @@ public class FileSinkTask extends SinkTask {
     public void put(Collection<SinkRecord> records) {
         try {
             for (SinkRecord record : records) {
-
-                writer.write(record.toString());
+                writer.write(record.value().toString());
                 writer.newLine();
             }
             writer.flush();
