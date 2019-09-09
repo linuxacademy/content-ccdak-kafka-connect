@@ -2,7 +2,6 @@ package com.linuxacademy.ccdak.connect;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,7 +14,7 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
 
-public class FileStreamSourceTask extends SourceTask {
+public class FileSourceTask extends SourceTask {
 
     private String filename;
     private BufferedReader reader;
@@ -28,11 +27,9 @@ public class FileStreamSourceTask extends SourceTask {
             String line;
             int lineNumber = 0;
             while ((line = reader.readLine()) != null) {
-                if (line != null) {
-                    Map sourcePartition = Collections.singletonMap("filename", filename);
-                    Map sourceOffset = Collections.singletonMap("position", lineNumber);
-                    records.add(new SourceRecord(sourcePartition, sourceOffset, topic, Schema.STRING_SCHEMA, line));
-                }
+                Map sourcePartition = Collections.singletonMap("filename", filename);
+                Map sourceOffset = Collections.singletonMap("position", lineNumber);
+                records.add(new SourceRecord(sourcePartition, sourceOffset, topic, Schema.STRING_SCHEMA, line));
             }
             lineNumber++;
             return records;
@@ -45,13 +42,13 @@ public class FileStreamSourceTask extends SourceTask {
 
     @Override
     public void start(Map<String, String> props) {
-        filename = props.get(FileStreamSourceConnector.FILE_CONFIG);
+        filename = props.get(FileSourceConnector.FILE_CONFIG);
         try {
             reader = new BufferedReader(new FileReader(new File(filename)));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        topic = props.get(FileStreamSourceConnector.TOPIC_CONFIG);
+        topic = props.get(FileSourceConnector.TOPIC_CONFIG);
     }
 
     @Override
@@ -65,7 +62,7 @@ public class FileStreamSourceTask extends SourceTask {
 
     @Override
     public String version() {
-        return new FileStreamSourceConnector().version();
+        return new FileSourceConnector().version();
     }
 
 }
