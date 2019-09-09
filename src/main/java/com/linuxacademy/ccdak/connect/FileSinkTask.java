@@ -17,13 +17,15 @@ public class FileSinkTask extends SinkTask {
 
     @Override
     public void put(Collection<SinkRecord> records) {
-        for (SinkRecord record : records) {
-            try {
+        try {
+            for (SinkRecord record : records) {
+
                 writer.write(record.toString());
                 writer.newLine();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
+            writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
